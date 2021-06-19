@@ -5,8 +5,11 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import DatePicker from '../../GenerateReport/DatePicker';
 import {AirlineOperatorSelector,ATAMainSelector,MessagesSelector,EqIDSelector} from '../../GenerateReport/Selectors';
+//Buttons Imports
 import Button from '@material-ui/core/Button';
+//Axios Imports 
 import axios from 'axios';
+
 
 const useStyles = makeStyles((theme) => ({
 root: {
@@ -136,7 +139,7 @@ useEffect(() => {
  });
 
  if (flag === false) {  
-    const path = 'http://20.85.211.143:8080/api/MDCRawData/' + rawDataConditions.ata + '/' + rawDataConditions.eqID + '/' + rawDataConditions.operator + 
+    const path = 'http://40.82.160.131/api/MDCRawData/' + rawDataConditions.ata + '/' + rawDataConditions.eqID + '/' + rawDataConditions.operator + 
     '/' + rawDataConditions.messages + '/' + rawDataConditions.fromDate + '/' + rawDataConditions.toDate;
 
       axios.post(path).then(function (res) {

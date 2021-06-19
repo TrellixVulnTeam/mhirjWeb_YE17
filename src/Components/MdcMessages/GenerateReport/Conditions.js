@@ -12,6 +12,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
+//Buttons Imports
 import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
@@ -70,61 +71,50 @@ const useStyles = makeStyles((theme) => ({
 const Conditions = (props) => {
   const classes = useStyles();
 
-  const [analysis, setAnalysisType] = useState("daily");
-  const [EqID, setEqID] = useState('');
-  const [dateFrom, setDateFrom] = useState();
-  const [dateTo, setDateTo] = useState();
-  const [occurences, setOccurrences] = useState();
-  const [legs, setLegs] = useState();
-  const [intermittent, setIntermittent] = useState();
-  const [days, setDays] = useState('0');
-  const [airline, setAilineType] = useState();
-  const [ATAMain, setATAMain] = useState('');
-  const [messagesChoice, setIncludeMessages] = useState('');
-  const [reportConditions, setReportConditions] = useState(
-  {
-    analysis: '',
-    occurences: '',
-    legs: '',
-    intermittent: '',
-    days: '',
-    operator: '',
-    ata: '',
-    eqID: '',
-    messages: '',
-    fromDate: '',
-    toDate: '',
-  }
-  );
+   // ----- States and handle Functions for Radio Buttons  ----- 
+   const [analysis, setAnalysisType] = useState("daily");
+   const [EqID, setEqID] = useState('');
 
-  const handleAnalysisChange = (analysis) => {
-    setAnalysisType(analysis);
-  };
+    const handleAnalysisChange = (analysis) => {
+      setAnalysisType(analysis);
+    };
 
-  const handleDateFrom = (date) => {
-    setDateFrom(date);
-  };
+   // ----- States and handle Functions for Date  ----- 
+    const [dateFrom, setDateFrom] = useState();
+    const [dateTo, setDateTo] = useState();
 
-  const handleDateTo = (date) => {
-    setDateTo(date);
-  };
+    const handleDateFrom = (date) => {
+      setDateFrom(date);
+    };
+
+    const handleDateTo = (date) => {
+      setDateTo(date);
+    };
+
+  // ----- States and handle Functions for Inputs  ----- 
+    const [occurences, setOccurrences] = useState();
+    const [legs, setLegs] = useState();
+    const [intermittent, setIntermittent] = useState();
+    const [days, setDays] = useState('0');
 
   const handleOccurencesChange = (occurences) =>{
     setOccurrences(occurences);
   };
-
   const handleLegsChange = (legs) =>{
     setLegs(legs);
   };
-
   const handleIntermittentChange = (intermittent) =>{
     setIntermittent(intermittent);
   };
-
   const handleDaysChange = (days) =>{
     setDays(days);
   };
- 
+
+  // ----- States and handle Functions for Selects  ----- 
+  const [airline, setAilineType] = useState();
+  const [ATAMain, setATAMain] = React.useState('');
+  const [messagesChoice, setIncludeMessages] = React.useState('');
+
   const handleAirlineChange = (Airline) => {
     setAilineType(Airline);
   };
@@ -140,6 +130,24 @@ const Conditions = (props) => {
   const handleEqIDChange = (eqIDList) => {
     setEqID(eqIDList);
   };
+    
+// ----- States and handle Functions for Generate Report  ----- 
+
+const [reportConditions, setReportConditions] = useState(
+  {
+    analysis: '',
+    occurences: '',
+    legs: '',
+    intermittent: '',
+    days: '',
+    operator: '',
+    ata: '',
+    eqID: '',
+    messages: '',
+    fromDate: '',
+    toDate: '',
+  }
+ );
 
   const handleGenerateReport = (event) => {
     setReportConditions(

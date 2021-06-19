@@ -4,7 +4,9 @@ import FlagReport from './FlagReport/FlagReport';
 import HistoryReport from './HistoryReport/HistoryReport';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
+//Buttons Imports
 import Button from '@material-ui/core/Button';
+//Axios Imports 
 import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
@@ -40,88 +42,158 @@ const Report = (props) => {
   const [historyReportData, setHistoryReportData] = useState([]);
   const [flagData, setFlagData] = useState([]);
   const [flagList,setFlagList] = useState('');
-  const [flagConditions,setFlagConditions] = useState({});
-  const [loadingDaily, setLoadingDaily] = useState();
-  const [loadingHistory, setLoadingHistory] = useState();
-  const [loadingFlag, setLoadingFlag] = useState();
-  const [dailyValue,setDailyValue] = useState(0);
-  const [histValue,setHistValue] = useState(0);
-  const [flagValue,setFlagValue] = useState(0);
+  const [flag,setFlag] = useState(false);
+  const [flagConditions,setFlagConditions] = useState('');
+  const [loadingDaily, setLoadingDaily] = useState(true);
+  const [loadingHistory, setLoadingHistory] = useState(true);
+  const [loadingFlag, setLoadingFlag] = useState(true);
 
   const HandleMultipleRowSelectReport = (flagList) => {
     setFlagList(flagList);
   }
 
+  const [dailyValue,setDailyValue] = useState(0);
+  const [histValue,setHistValue] = useState(0);
+  const [flagValue,setFlagValue] = useState(0);
+
   useEffect(() => {
-    if (!Object.values(props.reportConditions).includes("")){
       setReport(props.reportConditions);
-    }
+      let flag = false;
+      for (var item in Object.entries(props.reportConditions)) {
+        if (Object.entries(props.reportConditions)[item][1] === "" | Object.entries(props.reportConditions)[item][1] === undefined || Object.entries(props.reportConditions)[item][1] === "('')") {
+          flag = true;
+          if (report.analysis === "daily"){
+            setLoadingDaily(false);
+          }
+          else if (report.analysis === "history"){
+            setLoadingHistory(false);
+          }
+        }
+      }
+      setFlag(flag);
+      
+    if (flag === false){
+      localStorage.setItem("last",JSON.stringify(props.reportConditions)); 
+      if(props.reportConditions.analysis === "daily"){
+        localStorage.setItem("daily",JSON.stringify(props.reportConditions)); 
+      }
+      else if(props.reportConditions.analysis === "history"){
+        localStorage.setItem("history",JSON.stringify(props.reportConditions));
+      } 
+    } 
+
   }, [props.reportConditions]);
 
-  useEffect(() => {
-    if(!Object.values(report).includes("")){
-      let consecutiveDays = report.analysis === "daily" ? 0 : report.days; 
-      const path = 'http://20.85.211.143:8080/api/GenerateReport/' + report.analysis + '/' + report.occurences + '/' + report.legs + '/' + report.intermittent + '/' +
-      consecutiveDays + '/' + report.ata + '/' + report.eqID + '/'+ report.operator + '/' + report.messages + '/' + report.fromDate + '/' + report.toDate;
-      console.log(path,"path no empty value");
-
+  useEffect( () => {
       if (report.analysis === "daily"){
         setDailyValue(1);
         setDailyReportData([]);
         setLoadingDaily(true);
-
-        axios.post(path).then(function (res){
-          var data = JSON.parse(res.data);
-          setDailyReportData(data);    
-          setLoadingDaily(false);
-        }).catch(function (err){
-          console.log(err);
-          setLoadingDaily(false);
-        });
       }
-      else{
+      else if (report.analysis === "history"){
         setHistValue(1);
         setHistoryReportData([]);
         setLoadingHistory(true);
-
-        axios.post(path).then(function (res){
-          var data = JSON.parse(res.data);
-          setHistoryReportData(data);  
-          setLoadingHistory(false);  
-        }).catch(function (err){
-          console.log(err);    
-          setLoadingHistory(false);
-        });
       }
-    }    
+    if (flag === false){
+      const {analysis, occurences, legs, intermittent} = report;
+      let consecutiveDays;
+      if (report.analysis === "daily") {
+        consecutiveDays = 0;
+      }
+      else {
+        consecutiveDays = report.days;
+      }
+      const operator = report.operator;          
+      const ata = report.ata;
+      const eqid = report.eqID;
+      const messages = 0; 
+      const fromDate = report.fromDate;
+      const toDate = report.toDate;
+
+      if (report.analysis !== "both") {
+        //const path = 'http://localhost:8000/api/GenerateReport/' + analysis + '/' + occurences + '/' + legs + '/' + intermittent + '/' +
+        //consecutiveDays + '/' + ata + '/' + eqid + '/'+ operator + '/' + messages + '/' + fromDate + '/' + toDate;
+
+        const path = 'http://40.82.160.131/api/GenerateReport/' + analysis + '/' + occurences + '/' + legs + '/' + intermittent + '/' +
+        consecutiveDays + '/' + ata + '/' + eqid + '/'+ operator + '/' + messages + '/' + fromDate + '/' + toDate;
+
+          axios.post(path).then(function (res){
+            var data = JSON.parse(res.data);
+            if (report.analysis === "daily") {
+              setDailyReportData(data);
+              setLoadingDaily(false);
+            }
+            else if (report.analysis === "history") {
+              setHistoryReportData(data);
+              setLoadingHistory(false);
+            }           
+          }).catch(function (err){
+            console.log(err);
+            if (report.analysis === "daily"){
+              setLoadingDaily(false);
+            }
+            else if (report.analysis === "history"){
+              setLoadingHistory(false);
+            }
+          })
+      }
+    }
+    else{
+      if (report.analysis === "daily"){
+        setLoadingDaily(false);
+      }
+      else if (report.analysis === "history"){
+        setLoadingHistory(false);
+      }
+    }
   }, [report]);
 
   const handleGenerateFlagReport = (event) => {
-    setFlagConditions({
-      ...props.reportConditions,
-      flagList
-    });
+    setFlagConditions(
+      {         
+        analysis: props.reportConditions.analysis,
+        occurences: props.reportConditions.occurences,
+        legs: props.reportConditions.legs,
+        HistExEqID: props.reportConditions.eqID,
+        intermittent: props.reportConditions.intermittent,
+        days: props.reportConditions.days,
+        operator: props.reportConditions.operator,
+        HistAta: props.reportConditions.ata,
+        messages: props.reportConditions.messages,
+        fromDate: props.reportConditions.fromDate,
+        toDate: props.reportConditions.toDate,
+        flagList: flagList,
+      },
+    );
     setFlagData([]);
     setLoadingFlag(true);
     setFlagValue(1);
   }
 
   useEffect(() => {
-    if (!(Object.keys(flagConditions).length === 0 || Object.values(flagConditions).includes(""))){
-      const flagPath = 'http://20.85.211.143:8080/api/GenerateReport/' + flagConditions.analysis + '/' + flagConditions.occurences + '/' + 
-      flagConditions.legs + '/' + flagConditions.intermittent + '/' + flagConditions.days + '/' + flagConditions.ata + '/' + 
-      flagConditions.eqID + '/'+ flagConditions.operator + '/' + flagConditions.messages + '/' + flagConditions.fromDate + '/' + 
-      flagConditions.toDate + '/' + flagConditions.flagList;
-      console.log(flagPath);
+    let flag = false;
+    Object.values(flagConditions).map(item => {
+      if (item === "" || item === undefined || item === "('')"){
+        flag = true;
+        setLoadingFlag(false);
+      }
+    });
 
-      axios.post(flagPath).then(function (res){
-        var data = JSON.parse(res.data);
-        setFlagData(data);
-        setLoadingFlag(false);
-      }).catch(function (err){
-        console.log(err);
-        setLoadingFlag(false);
-      });
+    if (flag === false) {        
+      const flagPath = 'http://40.82.160.131/api/GenerateReport/' + flagConditions.analysis + '/' + flagConditions.occurences + '/' + 
+      flagConditions.legs + '/' + flagConditions.intermittent + '/' + flagConditions.days + '/' + flagConditions.HistAta + '/' + 
+      flagConditions.HistExEqID + '/'+ flagConditions.operator + '/' + flagConditions.messages + '/' + flagConditions.fromDate + '/' + 
+      flagConditions.toDate + '/' + flagConditions.flagList;
+
+        axios.post(flagPath).then(function (res){
+          var data = JSON.parse(res.data);
+          setFlagData(data);
+          setLoadingFlag(false);
+        }).catch(function (err){
+          console.log(err);
+          setLoadingFlag(false);
+      })
     }
   },[flagConditions]);
 

@@ -4,6 +4,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+//Multiple select filters
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
@@ -32,7 +33,7 @@ const MessagesList = ['Include', 'Exclude'];
 
 export const AirlineOperatorSelector = (props) => {
   const classes = useStyles();
-  const [airline, setAirline] = useState('');
+  const [airline, setAirline] = React.useState('');
 
   const handleAirlineChange = (event) => {
     setAirline(event.target.value);
@@ -60,10 +61,11 @@ export const AirlineOperatorSelector = (props) => {
 
 export const ATAMainSelector = (props) => {
   const classes = useStyles();
-  const [ATAMain, setATAMain] = useState([]);
+  const [ATAMain, setATAMain] = React.useState([]);
   const [ATAMainList,setATAMainList] = useState([]);
   useEffect(() => {
-    const path = 'http://20.85.211.143:8080/api/GenerateReport/ata_main/ALL'
+    //const path = 'http://localhost:8000/api/GenerateReport/ata_main/ALL'
+    const path = 'http://40.82.160.131/api/GenerateReport/ata_main/ALL'
 
     try{
       axios.post(path).then(function (res) {
@@ -80,15 +82,18 @@ export const ATAMainSelector = (props) => {
 },[]);
 
   const handleATAChange = (event, values) => {
-    const ATAValues = [];
-    if(values.includes("ALL")){
-      ATAValues.push("ALL");
-      setATAMain(ATAValues);
-      props.handleATAChange("ALL");
-    }
+    var copy = [];
+    if(Object.values(values)[0] === "ALL" && ATAMain.length !== 0){
+      copy.push(Object.values(values)[1]);
+      setATAMain(copy);
+      }
     else{
-      setATAMain(values);    
-      let ataList = Object.values(values).length >0 ?  "('"+ values.join("','") +"')" : "";
+      setATAMain(values);
+    }
+    if(values.includes("ALL")){
+      props.handleATAChange("ALL");
+    }else{
+      let ataList =  "('"+ values.join("','") +"')";
       props.handleATAChange(ataList);
     }
   };
@@ -116,10 +121,11 @@ export const ATAMainSelector = (props) => {
 
 export const EqIDSelector = (props) => {
   const classes = useStyles();
-  const [EqID, setEqID] = useState([]);
+  const [EqID, setEqID] = React.useState([]);
   const [EqList,setEqIDList] = useState([]);
   useEffect(() => {
-    const path = 'http://20.85.211.143:8080/api/GenerateReport/equation_id/ALL'
+    const path = 'http://40.82.160.131/api/GenerateReport/equation_id/ALL'
+    //const path = 'http://localhost:8000/api/GenerateReport/equation_id/ALL'
 
     try{
       axios.post(path).then(function (res) {
@@ -136,15 +142,22 @@ export const EqIDSelector = (props) => {
 },[]);
 
   const handleEqIDChange = (event, values) => {
-    const EqIDValues = [];
+    console.log(values)
+    var copy = [];
+    //Analysis inputs, as soon as one ATA under “ATA Main” is selected the “ALL” should de-select. 
+    if(Object.values(values)[0] === "NONE" && EqID.length !== 0){
+      copy.push(Object.values(values)[1]);
+      setEqID(copy);
+      }
+    else{
+      setEqID(values);
+    }
+   
     if(values.includes("NONE")){
-      EqIDValues.push("NONE");
-      setEqID(EqIDValues);
       props.handleEqIDChange("NONE");
     }
     else{
-      setEqID(values);    
-      let eqIDLIST = Object.values(values).length >0 ?  "('"+ values.join("','") +"')" : "";
+      let eqIDLIST =  "('"+ values.join("','") +"')";
       props.handleEqIDChange(eqIDLIST);
     }
   };
@@ -174,11 +187,11 @@ export const EqIDSelector = (props) => {
 
 export const MessagesSelector = (props) => {
   const classes = useStyles();
-  const [messages, setIncludeMessages] = useState('');
+  const [messages, setIncludeMessages] = React.useState('');
 
   const handleMessagesChange = (event) => {
     let value = 0;
-    if(event.target.value === 'Include'){
+    if(event.target.value == 'Include'){
       value = 1;
     }
     setIncludeMessages(event.target.value);

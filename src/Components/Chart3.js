@@ -7,7 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { saveAs } from 'file-saver';
 import axios from 'axios';
-import { DateConverter } from './DateConverter';
+import { DateConverter } from './Helpercharts';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -29,8 +29,8 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(150),
   },
   formControl: {
-    margin: theme.spacing(0),
-    minWidth: 226,
+    margin: theme.spacing(1),
+    minWidth: 215,
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
@@ -45,10 +45,10 @@ export default function Chart3() {
   const [data_chart3, setData_chart3] = useState({
     aircraft_no: "",
     equation_id: "",
+    flight_phase: "",
     from_date: "",
     to_date: ""
   });
-  
 
 
   function save(e) {
@@ -64,10 +64,10 @@ export default function Chart3() {
     let Dates = [];
     let OccperDay = [];
 
-    const path = 'http://20.85.211.143:8080/api/chart_three/' + data_chart3.aircraft_no + '/' + data_chart3.equation_id + '/' + flightphase + '/' + data_chart3.from_date + '/' + data_chart3.to_date;
-    //const path = 'http://40.82.160.131/api/chart_three/' + data_chart3.aircraft_no + '/' + data_chart3.equation_id + '/' + data_chart3.flight_phase + '/' + data_chart3.from_date + '/' + data_chart3.to_date;
+    //const path = 'http://localhost:8000/chart_three/' + data_chart3.aircraft_no + '/' + data_chart3.equation_id + '/' + flightphase+ '/' + data_chart3.from_date + '/' + data_chart3.to_date;
+    const path = 'http://40.82.160.131/api/chart_three/' + data_chart3.aircraft_no + '/' + data_chart3.equation_id + '/' + flightphase + '/' + data_chart3.from_date + '/' + data_chart3.to_date;
 
-    console.log(path)
+
     axios.post(path)
       .then(res => {
         //console.log(res,"response");
@@ -92,20 +92,18 @@ export default function Chart3() {
         //console.log(err);
       });
   }
+
+  function handle_chart3(e) {
+    const newdata = { ...data_chart3 }
+    newdata[e.target.id] = e.target.value
+    setData_chart3(newdata)
+    console.log(newdata)
+
+  }
   const handleflightphase = (event) => {
     setflightphase(event.target.value)
     
   };
-  
-
-  function handle_chart3(e) {
-    
-    const newdata = { ...data_chart3 }
-    newdata[e.target.id] = e.target.value
-    setData_chart3(newdata)
-    //console.log(newdata)
-
-  }
 
   return (
     <div className={classes.root}>
@@ -119,7 +117,6 @@ export default function Chart3() {
             <br></br>
             <div> <TextField onChange={(e) => handle_chart3(e)} id="equation_id" value={data_chart3.equation_id} label="Equation ID" defaultValue=" " variant="outlined" /></div>
             <br></br>
-  
             <div><FormControl variant="outlined" className={classes.formControl}>
               <InputLabel id="demo-simple-select-outlined-label">Current Messages</InputLabel>
               <Select labelId="demo-simple-select-outlined-label"  id="flight_phase" value={flightphase} onChange={handleflightphase}  label="Current Messages">

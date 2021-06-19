@@ -28,8 +28,8 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(150),
   },
   formControl: {
-    margin: theme.spacing(0),
-    minWidth: 226,
+    margin: theme.spacing(1),
+    minWidth: 215,
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
@@ -63,9 +63,12 @@ export default function Chart5() {
     e.preventDefault();
     let intermittence = [];
     let flight_leg = [];
-    
-    
-    const path='http://20.85.211.143:8080/api/chart_five/' +data_chart5.aircraft_no+ '/' +data_chart5.equation_id+ '/' +flightphase+ '/' +data_chart5.from_date+ '/' +data_chart5.to_date;
+
+
+   // const path = 'http://localhost:8000/chart_five/' + data_chart5.aircraft_no + '/' + data_chart5.equation_id + '/' + flightphase + '/' + data_chart5.from_date + '/' + data_chart5.to_date;
+    const path = 'http://40.82.160.131/api/chart_five/' + data_chart5.aircraft_no + '/' + data_chart5.equation_id + '/' + flightphase + '/' + data_chart5.from_date + '/' + data_chart5.to_date;
+
+
     axios.post(path)
       .then(res => {
         //console.log(res,"response");
@@ -89,10 +92,7 @@ export default function Chart5() {
         //console.log(err);
       });
   }
-  // const handleflightphase = (event) => {
-  //   setflightphase(event.target.value)
-    
-  // };
+
 
   function handle_chart5(e) {
     const newdata = { ...data_chart5 }
@@ -113,8 +113,8 @@ export default function Chart5() {
         <Grid item xs={12}>
 
           <form className={classes.root1} noValidate autoComplete="off">
-          <div><h1 style={{color:"#001C3E", textAlign: "center"}}>INTERMITTENCE FLIGHT LEG TREND FOR AIRCRAFT</h1></div>   
-            <div> <TextField onChange= {(e)=>handle_chart5(e)} id="aircraft_no" value={data_chart5.aircraft_no} label="Aircraft No" defaultValue=" " variant="outlined" /></div>
+            <div><h1 style={{ color: "#001C3E", textAlign: "center" }}>INTERMITTENCE FLIGHT LEG TREND FOR AIRCRAFT</h1></div>
+            <div> <TextField onChange={(e) => handle_chart5(e)} id="aircraft_no" value={data_chart5.aircraft_no} label="Aircraft MSN" defaultValue=" " variant="outlined" /></div>
             <br></br>
             <div> <TextField onChange={(e) => handle_chart5(e)} id="equation_id" value={data_chart5.equation_id} label="Equation ID" defaultValue=" " variant="outlined" /></div>
             <br></br>
