@@ -49,6 +49,7 @@ import FlagReport from './Components/MdcMessages/Reports/FlagReport/FlagReport';
 import TimelineSharpIcon from '@material-ui/icons/TimelineSharp';
 import Rawdata from './Components/MdcMessages/Reports/Rawdata/RawMdcMessages';
 import TrendingUpSharpIcon from '@material-ui/icons/TrendingUpSharp';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 const drawerWidth = 330;
 const useStyles = makeStyles((theme) => ({
@@ -161,6 +162,10 @@ export default function MiniDrawer() {
     setOpen(true);
   };
 
+  const handleClickAway = () => {
+    setOpen(false);
+  };
+
   const handleDrawerClose = () => {
     setOpen(false);
   };
@@ -203,6 +208,11 @@ export default function MiniDrawer() {
             <typography style={{ color: "#001c3e", fontSize: "24px", fontFamily: "Times New Roman" }}>MDC Trend Analysis Tool</typography>
           </Toolbar>
         </AppBar>
+        <ClickAwayListener
+            mouseEvent="onMouseDown"
+            touchEvent="onTouchStart"
+            onClickAway={handleClickAway}
+          >
         <Drawer
           variant="permanent"
           className={clsx(classes.drawer, {
@@ -215,11 +225,13 @@ export default function MiniDrawer() {
               [classes.drawerClose]: !open,
             }),
           }}>
+       
           <div className={classes.toolbar}>
             <IconButton onClick={handleDrawerClose}>
               {theme.direction === 'rtl' ? <ChevronRightIcon style={{ color: "#001c3e" }} /> : <ChevronLeftIcon style={{ color: "#001c3e" }} />}
             </IconButton>
           </div>
+          
           <Divider />
           <List>
             <ListItem button onClick={handleMainClick} disablePadding>
@@ -362,7 +374,6 @@ export default function MiniDrawer() {
                   </ListItem>
                 </Link>
               </List>
-
             </Collapse>
 
             <ListItem >
@@ -377,9 +388,12 @@ export default function MiniDrawer() {
             </ListItem>
 
           </List>
-          <Divider />
 
+          <Divider />
         </Drawer>
+        </ClickAwayListener>
+        
+
         <main className={classes.content}>
           <div className={classes.toolbar} />
 
