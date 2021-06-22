@@ -31,7 +31,8 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Link,
+  HashRouter
 } from "react-router-dom";
 import Home from './Components/Home';
 import Corr from './Components/Corr';
@@ -185,7 +186,8 @@ export default function MiniDrawer() {
   return (
 
     <div className={classes.root}>
-      <Router history={hashHistory}>
+      <HashRouter>
+      <Router>
         <CssBaseline />
         <AppBar
           color="primary"
@@ -437,13 +439,15 @@ export default function MiniDrawer() {
             <Route path="/flag">
               <FlagReport />
             </Route>
-            <Route path="#/corr">
+            <Route path="/corr">
               <Correlation />
             </Route>
           </Switch>
         </main>
 
       </Router>
+      </HashRouter>
+
 
     </div>
   );
