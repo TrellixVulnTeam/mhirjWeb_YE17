@@ -185,7 +185,7 @@ export default function MiniDrawer() {
   return (
 
     <div className={classes.root}>
-      <Router>
+      <Router history={hashHistory}>
         <CssBaseline />
         <AppBar
           color="primary"
@@ -437,7 +437,7 @@ export default function MiniDrawer() {
             <Route path="/flag">
               <FlagReport />
             </Route>
-            <Route path="/corr">
+            <Route path="#/corr">
               <Correlation />
             </Route>
           </Switch>
